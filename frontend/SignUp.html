@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - SmartCity Complaint Hub</title>
+
+    <!-- Bootstrap & Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Lottie Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .signup-container {
+            background-color: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 900px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-section {
+            width: 55%;
+        }
+
+        .animation-section {
+            width: 40%;
+        }
+
+        .signup-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2C2C2C;
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            color: #2C2C2C;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        /* Input Lines Instead of Boxes */
+        .form-control {
+            border: none;
+            border-bottom: 2px solid #ccc;
+            border-radius: 0;
+            padding-left: 0;
+            background-color: transparent;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .form-control:focus {
+            border-bottom: 2px solid #7c01ff;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #7c01ff;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+            border: none;
+            font-size: 16px;
+        }
+
+        .signup-btn:hover {
+            background-color: #8d25fc;
+        }
+
+        .login-text {
+            text-align: center;
+            color: #2C2C2C;
+            margin-top: 1rem;
+        }
+
+        .login-link {
+            color: #7c01ff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="signup-container">
+            <div class="form-section">
+                <h2 class="signup-title text-center">Sign Up</h2>
+                <form id="signupForm">
+                    <div class="mb-4">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" class="form-control" id="name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Your Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Repeat Password</label>
+                        <input type="password" class="form-control" id="repeatPassword" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="terms" required>
+                        <label class="form-check-label">I agree to the <a href="#">Terms of Service</a></label>
+                    </div>
+                    <button type="submit" class="signup-btn">Register</button>
+                </form>
+                <p class="login-text">
+                    Already have an account?
+                    <a href="SignIn.html" class="login-link">Sign In</a>
+                </p>
+            </div>
+            <div class="animation-section">
+                <div id="lottie-animation" style="width: 100%; height: 250px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lottie Animation Loader
+        lottie.loadAnimation({
+            container: document.getElementById('lottie-animation'), // Container ID
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'https://lottie.host/52b9e668-f47d-4f08-9baf-02b0394e266c/P44UAxtUNJ.json' // Replace with your working Lottie JSON URL
+        });
+
+        document.getElementById("signupForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+            let repeatPassword = document.getElementById("repeatPassword").value;
+
+            if (password !== repeatPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:5000/api/signup", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ name, email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("Sign-up successful! Redirecting...");
+                    localStorage.setItem("signedUp", "true");
+                    
+                    // Use replace() instead of href for redirection
+                    window.location.replace("SignIn.html");
+                } else {
+                    alert(data.error || "Sign-up failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Something went wrong. Please try again.");
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
