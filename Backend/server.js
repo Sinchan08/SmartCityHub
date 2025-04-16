@@ -26,7 +26,7 @@ app.post("/api/signup", async (req, res) => {
     const { name, email, password, confirm_password } = req.body;
 
     // check if passwords match
-    if (password !== confirm_password) {
+    if (password != confirm_password) {
       return res.status(400).json({ error: "Passwords do not match" });
     }
 

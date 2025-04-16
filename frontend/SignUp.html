@@ -157,9 +157,9 @@
             let name = document.getElementById("name").value;
             let email = document.getElementById("email").value;
             let password = document.getElementById("password").value;
-            let repeatPassword = document.getElementById("repeatPassword").value;
+            let confirm_password = document.getElementById("repeatPassword").value;
 
-            if (password !== repeatPassword) {
+            if (password != confirm_password) {
                 alert("Passwords do not match!");
                 return;
             }
@@ -170,7 +170,7 @@
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ name, email, password }),
+                    body: JSON.stringify({ name, email, password, confirm_password }),
                 });
 
                 const data = await response.json();
