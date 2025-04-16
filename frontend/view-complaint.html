@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complaint Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-tr from-purple-100 to-white min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white shadow-xl rounded-xl p-8 max-w-2xl w-full">
+    <h1 class="text-3xl font-bold text-purple-700 mb-6 text-center border-b pb-4">Complaint Details</h1>
+    <div id="details" class="space-y-4 text-gray-800 text-base"></div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const complaintId = urlParams.get('id');
+
+    fetch(`http://localhost:5000/api/complaints/${complaintId}`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("details");
+
+        // Fix the imageUrl by checking and correcting the prefix
+        let imageUrl = data.imageUrl;
+        if (imageUrl && imageUrl.startsWith("http://localhost:5000")) {
+          imageUrl = imageUrl.replace("http://localhost:5000", ""); // Remove localhost part
+        }
+
+        container.innerHTML = `
+          <p><strong>Complaint ID:</strong> ${data.complaintId}</p>
+          <p><strong>Name:</strong> ${data.name}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Contact:</strong> ${data.contact || '<span class="text-gray-500 italic">Not provided</span>'}</p>
+          <p><strong>Address:</strong> ${data.address || '<span class="text-gray-500 italic">Not provided</span>'}</p>
+          <p><strong>Status:</strong> <span class="${data.status === 'Pending' ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold'}">${data.status}</span></p>
+          <p><strong>Complaint:</strong> ${data.complaint}</p>
+          ${imageUrl ? `
+            <div>
+              <p class="font-semibold">Attached Image:</p>
+              <img src="${imageUrl}" alt="Complaint Image"
+                   class="mt-2 rounded-lg shadow max-h-64 border object-contain" />
+            </div>
+          ` : '<p class="text-gray-500 italic">No image provided.</p>'}
+        `;
+      })
+      .catch(err => {
+        document.getElementById("details").innerHTML = "<p class='text-red-500'>Error fetching complaint details.</p>";
+      });
+  </script>
+</body>
+</html>

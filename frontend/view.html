@@ -51,27 +51,65 @@
     </script>
 </head>
 <body class="bg-gray-100 p-6">
-    <nav class="primary-bg p-4 flex justify-between items-center shadow-md rounded-lg text-white">
-        <h1 class="text-2xl font-semibold">View Complaints</h1>
-        <a href="Dashboards.html" class="hover:underline">Back to Dashboard</a>
-    </nav>
-
-    <div class="max-w-4xl mx-auto mt-6 card p-6">
-        <h2 class="text-2xl font-semibold mb-4">Your Complaints</h2>
-        <p><strong>Logged in as:</strong> <span id="userEmail"></span></p>
-
-        <div class="overflow-x-auto mt-4">
-            <table class="w-full border-collapse border border-gray-300">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="p-3 text-left">Complaint ID</th>
-                        <th class="p-3 text-left">Issue</th>
-                        <th class="p-3 text-left">Status</th>
-                    </tr>
-                </thead>
-                <tbody id="complaintsTable"></tbody>
-            </table>
-        </div>
+    <h1 class="text-2xl font-bold mb-4">Your Complaints</h1>
+  
+    <!-- Complaints Table -->
+    <div class="overflow-x-auto mt-4 rounded-lg shadow-sm">
+      <table class="min-w-full bg-white rounded-lg shadow">
+        <thead class="bg-purple-600 text-white">
+          <tr>
+            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Complaint ID</th>
+            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Complaint</th>
+            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Status</th>
+          </tr>
+        </thead>
+        <tbody id="complaintsTable" class="text-gray-700">
+          <!-- Complaints will be inserted here -->
+        </tbody>
+      </table>
     </div>
-</body>
+  
+    <!-- Cards with View Buttons -->
+    <div id="complaintsContainer" class="space-y-4 mt-10">
+      <!-- Cards get inserted here -->
+    </div>
+  
+    <script>
+      const userEmail = localStorage.getItem("userEmail");
+  
+      fetch(`http://localhost:5000/api/user-complaints?email=${userEmail}`)
+        .then(res => res.json())
+        .then(complaints => {
+          const table = document.getElementById("complaintsTable");
+          const container = document.getElementById("complaintsContainer");
+  
+          complaints.forEach(c => {
+            // Table Row
+            const row = document.createElement("tr");
+            row.className = "border-b";
+            row.innerHTML = `
+              <td class="p-3">${c.complaintId}</td>
+              <td class="p-3">${c.complaint}</td>
+              <td class="p-3 font-semibold ${c.status === 'Resolved' ? 'text-green-600' : 'text-red-600'}">
+                ${c.status}
+              </td>`;
+            table.appendChild(row);
+  
+            // Card with View button
+            const div = document.createElement("div");
+            div.className = "card p-4 bg-white rounded-lg shadow";
+            div.innerHTML = `
+              <p><strong>ID:</strong> ${c.complaintId}</p>
+              <p><strong>Complaint:</strong> ${c.complaint}</p>
+              <p><strong>Status:</strong> ${c.status}</p>
+              <a href="view-complaint.html?id=${c.complaintId}" class="mt-2 inline-block bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700">
+                View
+              </a>
+            `;
+            container.appendChild(div);
+          });
+        });
+    </script>
+  </body>
+  
 </html>
