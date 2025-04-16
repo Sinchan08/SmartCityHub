@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 
+
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -69,13 +70,12 @@ app.post("/api/signin", async (req, res) => {
 });
 
 app.get("/api/user-complaints", async (req, res) => {
-  const userEmail = req.query.email;
+  const userEmail = req.query.email; 
   if (!userEmail) return res.status(400).json({ error: "Email is required" });
-
-  try {
+  try { 
       const complaints = await Complaint.find(
-          { email: userEmail },
-          { _id: 1, complaint: 1, status: 1 } // Fetch only ID, complaint details, and status
+        { email: userEmail },
+        { complaintId: 1, complaint: 1, status: 1, _id: 0 } // Only return short ID
       );
 
       res.json(complaints);
@@ -83,6 +83,7 @@ app.get("/api/user-complaints", async (req, res) => {
       res.status(500).json({ error: "Server error" });
   }
 });
+
 
 
 
